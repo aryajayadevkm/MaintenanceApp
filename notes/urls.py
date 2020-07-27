@@ -1,7 +1,7 @@
 from django.urls import path
 from rest_framework.routers import SimpleRouter
-from .views import NoteViewSet
+from .views import FlatViewSet
 
 router = SimpleRouter()
-router.register('notes', NoteViewSet)
+router.register('notes', FlatViewSet)
 urlpatterns = router.urls

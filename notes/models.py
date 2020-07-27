@@ -4,15 +4,7 @@ from django.db import models
 from jwtauth.models import User
 
 
-class Note(models.Model):
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='flats', blank=True, null=True)
-    flat_no = models.CharField(max_length=200)
-
-    def __str__(self):
-        return self.flat_no
-
-
-class Profile(models.Model):
+class Resident(models.Model):
     # There is an inherent relationship between the Profile and
     # User models. By creating a one-to-one relationship between the two, we
     # are formalizing this relationship. Every user will have one -- and only
@@ -32,3 +24,10 @@ class Profile(models.Model):
     def __str__(self):
         return self.user.username
 
+
+class Flat(models.Model):
+    owner = models.ForeignKey(Resident, on_delete=models.CASCADE, related_name='flats', blank=True, null=True)
+    flat_no = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.flat_no

@@ -1,6 +1,6 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from notes.models import Profile
+from notes.models import Resident
 from .models import User
 
 
@@ -11,5 +11,5 @@ def create_related_profile(sender, instance, created, *args, **kwargs):
     # this signal to be run was an update action, we know the user already
     # has a profile.
     if instance and created:
-        instance.profile = Profile.objects.create(user=instance)
+        instance.profile = Resident.objects.create(user=instance)
 

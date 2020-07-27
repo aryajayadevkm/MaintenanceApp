@@ -3,8 +3,8 @@ from django.shortcuts import render
 # Create your views here.
 from rest_framework import viewsets
 from rest_framework import permissions
-from .models import Note
-from .serializers import NoteSerializer
+from .models import Flat
+from .serializers import FlatSerializer
 from rest_framework.exceptions import PermissionDenied
 
 
@@ -14,9 +14,9 @@ class IsOwner(permissions.BasePermission):
         return obj.owner == request.user
 
 
-class NoteViewSet(viewsets.ModelViewSet):
-    queryset = Note.objects.all()
-    serializer_class = NoteSerializer
+class FlatViewSet(viewsets.ModelViewSet):
+    queryset = Flat.objects.all()
+    serializer_class = FlatSerializer
 
     # def get_queryset(self):
     #     user = self.request.user

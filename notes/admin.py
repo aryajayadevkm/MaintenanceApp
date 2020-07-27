@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Note, Profile
+from .models import Flat, Resident
 
-admin.site.register(Note)
-admin.site.register(Profile)
+admin.site.register(Flat)
+admin.site.register(Resident)

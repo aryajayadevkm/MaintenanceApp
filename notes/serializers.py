@@ -1,19 +1,19 @@
 from rest_framework import serializers
-from .models import Note, Profile
+from .models import Flat, Resident
 
 
-class NoteSerializer(serializers.ModelSerializer):
+class FlatSerializer(serializers.ModelSerializer):
     class Meta:
         fields = ("id", "flat_no","owner")
-        model = Note
+        model = Flat
 
 
-class ProfileSerializer(serializers.ModelSerializer):
+class ResidentSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username')
     flats = serializers.StringRelatedField(many=True)
 
     class Meta:
-        model = Profile
+        model = Resident
         fields = ('username', 'mobile_no', 'flats')
         read_only_fields = ('username',)
 
