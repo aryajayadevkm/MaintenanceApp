@@ -1,6 +1,6 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from notes.models import Resident
+from flats.models import Resident
 from .models import User
 
 

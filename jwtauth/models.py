@@ -98,7 +98,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
         This string is used when a `User` is printed in the console.
         """
-        return self.email
+        return self.username
 
     @property
     def token(self):

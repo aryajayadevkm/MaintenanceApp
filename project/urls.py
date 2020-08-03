@@ -19,7 +19,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('notes.urls')),
+    path('api/', include('flats.urls')),
     path('auth/', include('rest_framework.urls')),
     # path('api/jwtauth/', include('jwtauth.urls'), name='jwtauth'),
     path('api/', include('jwtauth.urls', namespace='jwtauth')),

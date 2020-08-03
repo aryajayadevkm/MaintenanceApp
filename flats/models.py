@@ -24,10 +24,31 @@ class Resident(models.Model):
     def __str__(self):
         return self.user.username
 
+    @property
+    def email_id(self):
+        return self.user.email
+
 
 class Flat(models.Model):
     owner = models.ForeignKey(Resident, on_delete=models.CASCADE, related_name='flats', blank=True, null=True)
     flat_no = models.CharField(max_length=200)
+    maintenance_charge = models.IntegerField(null=True)
 
     def __str__(self):
         return self.flat_no
+
+
+class PaymentHistory(models.Model):
+    flat = models.ForeignKey(Flat, on_delete=models.CASCADE)
+    amount = models.IntegerField(null=True)
+    paid_for = models.DateTimeField(null=True)
+    remarks = models.TextField(null=True, max_length=200)
+    timestamp = models.DateTimeField(auto_now=True)
+
+    @property
+    def owner(self):
+        return self.flat.owner.user.username
+
+    @property
+    def maintenance_charge(self):
+        return self.flat.maintenance_charge

@@ -42,7 +42,7 @@ INSTALLED_APPS = [
 
     "rest_framework",  # new
     "corsheaders",  # new
-    "notes",  # new
+    "flats",  # new
     "jwtauth",  # new
 
 ]
@@ -65,7 +65,8 @@ REST_FRAMEWORK = {
     "DEFAULT_PARSER_CLASSES": [
         "rest_framework.parsers.JSONParser"
     ],
-    "DEFAULT_AUTHENTICATION_CLASSES": [                              # new
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "jwtauth.backends.JWTAuthentication",
         "rest_framework.authentication.SessionAuthentication",        # new
         "rest_framework_simplejwt.authentication.JWTAuthentication" # new
     ]
