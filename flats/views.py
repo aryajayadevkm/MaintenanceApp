@@ -85,6 +85,7 @@ class MonthlyCollectionListCreateView(ListCreateAPIView):
             print(blank_payment_record)
         return PaymentHistory.objects.filter(paid_for=None)|PaymentHistory.objects\
             .filter(paid_for__month=today.month, paid_for__year=today.year)
+    # adding commrny
 
 
 
