@@ -55,6 +55,8 @@ class ResidentListViewSet(APIView):
 """
 data looks like {"flat" :"1", "amount" :"1200", "paid_for" :, "remarks":"nil"}
 """
+
+
 class MonthlyCollectionViewSet(APIView):
     permission_classes = (AllowAny,)
     serializer_class = MonthlyCollectionSerializer
@@ -72,20 +74,28 @@ class MonthlyCollectionViewSet(APIView):
         return Response({'message': 'post failed'})
 
 
-class MonthlyCollectionListCreateView(ListCreateAPIView):
-    serializer_class = MonthlyCollectionSerializer
+class MonthlyCollectionListCreateView(viewsets.ViewSet):
+    permission_classes = (AllowAny,)
 
-    def get_queryset(self):
+    def list(self, request, *args, **kwargs):
         today = datetime.today()
-        flats_already_paid_this_month = PaymentHistory.objects.filter(paid_for__month=today.month, paid_for__year=today.year)\
-            .values_list('flat', flat=True)
+        flats_already_paid_this_month = \
+            PaymentHistory.objects.filter(
+                paid_for__month=today.month, paid_for__year=today.year).values_list('flat', flat=True)\
+            | PaymentHistory.objects.filter(paid_for=None).values_list('flat')
         remaining_flats = Flat.objects.exclude(id__in=flats_already_paid_this_month)
         for flat in remaining_flats:
             blank_payment_record = PaymentHistory.objects.create(flat=flat)
             print(blank_payment_record)
-        return PaymentHistory.objects.filter(paid_for=None)|PaymentHistory.objects\
+
+        queryset = PaymentHistory.objects.filter(paid_for=None) | PaymentHistory.objects \
             .filter(paid_for__month=today.month, paid_for__year=today.year)
-    # adding commrny
+        serializer = MonthlyCollectionSerializer(queryset, many=True)
+        return Response(serializer.data)
 
-
-
+    def partial_update(self, request, pk):
+        instance = PaymentHistory.objects.get(pk=pk)
+        serializer = MonthlyCollectionSerializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
