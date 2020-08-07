@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from datetime import datetime
 
+from jwtauth.serializers import UserSerializer
 from .models import Flat, Resident, PaymentHistory
 from .serializers import FlatSerializer, ResidentSerializer, MonthlyCollectionSerializer
 from rest_framework.exceptions import PermissionDenied
@@ -39,39 +40,38 @@ class FlatListViewSet(APIView):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response({'message': 'post failed'})
 
 
-class ResidentListViewSet(APIView):
+# class ResidentListViewSet(APIView):
+#     permission_classes = (AllowAny,)
+#
+#     def get(self, request):
+#         resident_list = Resident.objects.all()
+#         serializer = ResidentSerializer(resident_list, many=True)
+#         return Response(serializer.data)
+
+class ResidentListViewSet(viewsets.ViewSet):
     permission_classes = (AllowAny,)
 
-    def get(self, request):
+    def list(self, request):
         resident_list = Resident.objects.all()
         serializer = ResidentSerializer(resident_list, many=True)
         return Response(serializer.data)
+
+    def partial_update(self, request, pk):
+        instance = Resident.objects.get(pk=pk)
+        serializer = ResidentSerializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 
 """
 data looks like {"flat" :"1", "amount" :"1200", "paid_for" :, "remarks":"nil"}
 """
-
-
-class MonthlyCollectionViewSet(APIView):
-    permission_classes = (AllowAny,)
-    serializer_class = MonthlyCollectionSerializer
-
-    def get(self, request):
-        collection_list = PaymentHistory.objects.all()
-        serializer = self.serializer_class(collection_list, many=True)
-        return Response(serializer.data)
-
-    def post(self, request):
-        serializer = self.serializer_class(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response({'message': 'post failed'})
 
 
 class MonthlyCollectionListCreateView(viewsets.ViewSet):

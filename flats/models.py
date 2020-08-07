@@ -25,7 +25,7 @@ class Resident(models.Model):
         return self.user.username
 
     @property
-    def email_id(self):
+    def email(self):
         return self.user.email
 
 

@@ -1,4 +1,6 @@
 from rest_framework import serializers
+
+from jwtauth.serializers import UserSerializer
 from .models import Flat, Resident, PaymentHistory
 
 
@@ -11,12 +13,20 @@ class FlatSerializer(serializers.ModelSerializer):
 class ResidentSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username')
     flats = serializers.StringRelatedField(many=True)
-    email_id = serializers.CharField()
+    email = serializers.CharField()
 
     class Meta:
         model = Resident
-        fields = ('username', 'mobile_no', 'email_id', 'flats')
-        read_only_fields = ('username', 'email_id')
+        fields = ('username', 'mobile_no', 'email', 'flats')
+        read_only_fields = ('flats',)
+
+    def update(self, instance, validated_data):
+        instance.mobile_no = validated_data.get('mobile_no', instance.mobile_no)
+        validated_data.pop('mobile_no', None)
+        userserializer = UserSerializer(instance.user, data=validated_data['user'], partial=True)
+        userserializer.is_valid(raise_exception=True)
+        userserializer.save()
+        return instance
 
 
 class MonthlyCollectionSerializer(serializers.ModelSerializer):

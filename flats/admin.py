@@ -9,7 +9,7 @@ class FlatAdmin(admin.ModelAdmin):
 
 
 class ResidentAdmin(admin.ModelAdmin):
-    list_display = ('user', 'mobile_no', 'email_id')
+    list_display = ('user', 'mobile_no', 'email')
 
 
 class PaymentHistoryAdmin(admin.ModelAdmin):
