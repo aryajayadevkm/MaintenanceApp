@@ -11,7 +11,7 @@ class FlatSerializer(serializers.ModelSerializer):
 
 
 class ResidentSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(source='user.username')
+    username = serializers.CharField()
     flats = serializers.StringRelatedField(many=True)
     email = serializers.CharField()
 
@@ -23,7 +23,7 @@ class ResidentSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         instance.mobile_no = validated_data.get('mobile_no', instance.mobile_no)
         validated_data.pop('mobile_no', None)
-        userserializer = UserSerializer(instance.user, data=validated_data['user'], partial=True)
+        userserializer = UserSerializer(instance.user, data=validated_data, partial=True)
         userserializer.is_valid(raise_exception=True)
         userserializer.save()
         return instance

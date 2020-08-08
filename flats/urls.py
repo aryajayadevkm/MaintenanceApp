@@ -5,7 +5,8 @@ from .views import FlatListViewSet, ResidentListViewSet, MonthlyCollectionListCr
 router = SimpleRouter()
 router.register('collections', MonthlyCollectionListCreateView, basename='collections')
 router.register('residents', ResidentListViewSet, basename='residents')
+router.register('flats', FlatListViewSet, basename='flats')
 urlpatterns = [
-    path('flats/', FlatListViewSet.as_view()),
+    # path('flats/', FlatListViewSet.as_view()),
 ] + router.urls
 
