@@ -25,6 +25,10 @@ class Resident(models.Model):
         return self.user.username
 
     @property
+    def username(self):
+        return self.user.username
+
+    @property
     def email(self):
         return self.user.email
 

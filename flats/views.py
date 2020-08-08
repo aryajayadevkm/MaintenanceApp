@@ -27,30 +27,26 @@ class IsOwner(permissions.BasePermission):
         return obj.owner == request.user
 
 
-class FlatListViewSet(APIView):
+# class FlatListViewSet(APIView):
+#     permission_classes = (AllowAny,)
+#     serializer_class = FlatSerializer
+#
+#     def get(self, request):
+#         flat_list = Flat.objects.all()
+#         serializer = self.serializer_class(flat_list, many=True)
+#         return Response(serializer.data)
+#
+#     def post(self, request):
+#         serializer = self.serializer_class(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         return Response({'message': 'post failed'})
+
+class FlatListViewSet(viewsets.ModelViewSet):
     permission_classes = (AllowAny,)
     serializer_class = FlatSerializer
 
-    def get(self, request):
-        flat_list = Flat.objects.all()
-        serializer = self.serializer_class(flat_list, many=True)
-        return Response(serializer.data)
-
-    def post(self, request):
-        serializer = self.serializer_class(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response({'message': 'post failed'})
-
-
-# class ResidentListViewSet(APIView):
-#     permission_classes = (AllowAny,)
-#
-#     def get(self, request):
-#         resident_list = Resident.objects.all()
-#         serializer = ResidentSerializer(resident_list, many=True)
-#         return Response(serializer.data)
 
 class ResidentListViewSet(viewsets.ViewSet):
     permission_classes = (AllowAny,)
