@@ -5,9 +5,14 @@ from .models import Flat, Resident, PaymentHistory
 
 
 class FlatSerializer(serializers.ModelSerializer):
+    owner = serializers.SerializerMethodField()
+
     class Meta:
-        fields = ("flat_no", "owner")
+        fields = ("flat_no", "owner", "last_paid")
         model = Flat
+
+    def get_owner(self, obj):
+        return obj.owner.username
 
 
 class ResidentSerializer(serializers.ModelSerializer):
@@ -23,9 +28,9 @@ class ResidentSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         instance.mobile_no = validated_data.get('mobile_no', instance.mobile_no)
         validated_data.pop('mobile_no', None)
-        userserializer = UserSerializer(instance.user, data=validated_data, partial=True)
-        userserializer.is_valid(raise_exception=True)
-        userserializer.save()
+        user_serializer = UserSerializer(instance.user, data=validated_data, partial=True)
+        user_serializer.is_valid(raise_exception=True)
+        user_serializer.save()
         return instance
 
 
@@ -37,7 +42,16 @@ class MonthlyCollectionSerializer(serializers.ModelSerializer):
         fields = ('flat', 'owner', 'maintenance_charge', 'amount', 'paid_for', 'remarks')
         read_only_fields = ('maintenance_charge', )
 
-    # flat
-    # amount
-    # paid_for
-    # remarks
+    def update(self, instance, validated_data):
+        data = {}
+        instance.amount = validated_data.get('amount', instance.amount)
+        instance.remarks = validated_data.get('remarks', instance.remarks)
+        instance.paid_for = validated_data.get('paid_for', instance.paid_for)
+
+        data['last_paid'] = validated_data.get('paid_for', instance.paid_for)
+        flat_serializer = FlatSerializer(instance.flat, data=data, partial=True)
+        flat_serializer.is_valid(raise_exception=True)
+        flat_serializer.save()
+        return instance
+
+
