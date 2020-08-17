@@ -35,8 +35,9 @@ class Resident(models.Model):
 
 class Flat(models.Model):
     owner = models.ForeignKey(Resident, on_delete=models.CASCADE, related_name='flats', blank=True, null=True)
-    flat_no = models.CharField(max_length=200)
+    flat_no = models.CharField(max_length=200, null=True)
     maintenance_charge = models.IntegerField(null=True)
+    last_paid = models.DateTimeField(null=True)
 
     def __str__(self):
         return self.flat_no
