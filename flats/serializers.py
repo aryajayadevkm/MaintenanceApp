@@ -27,7 +27,6 @@ class ResidentSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         instance.mobile_no = validated_data.get('mobile_no', instance.mobile_no)
-        print("#1", validated_data)
         validated_data.pop('mobile_no', None)
         user_serializer = UserSerializer(instance.user, data=validated_data, partial=True)
         user_serializer.is_valid(raise_exception=True)
