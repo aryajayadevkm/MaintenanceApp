@@ -27,10 +27,12 @@ class ResidentSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         instance.mobile_no = validated_data.get('mobile_no', instance.mobile_no)
+        print("#1", validated_data)
         validated_data.pop('mobile_no', None)
         user_serializer = UserSerializer(instance.user, data=validated_data, partial=True)
         user_serializer.is_valid(raise_exception=True)
         user_serializer.save()
+        instance.save()
         return instance
 
 
@@ -47,6 +49,7 @@ class MonthlyCollectionSerializer(serializers.ModelSerializer):
         instance.amount = validated_data.get('amount', instance.amount)
         instance.remarks = validated_data.get('remarks', instance.remarks)
         instance.paid_for = validated_data.get('paid_for', instance.paid_for)
+        instance.save()
 
         data['last_paid'] = validated_data.get('paid_for', instance.paid_for)
         flat_serializer = FlatSerializer(instance.flat, data=data, partial=True)
