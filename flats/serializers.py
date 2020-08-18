@@ -4,39 +4,33 @@ from jwtauth.serializers import UserSerializer
 from .models import Flat, Resident, PaymentHistory
 
 
-class FlatSerializer(serializers.ModelSerializer):
-    owner = serializers.SerializerMethodField()
-
-    class Meta:
-        fields = ("flat_no", "owner", "last_paid")
-        model = Flat
-
-    def get_owner(self, obj):
-        return obj.owner.username
-
-
 class ResidentSerializer(serializers.ModelSerializer):
-    username = serializers.CharField()
-    flats = serializers.StringRelatedField(many=True)
-    email = serializers.CharField()
 
     class Meta:
         model = Resident
-        fields = ('username', 'mobile_no', 'email', 'flats')
-        read_only_fields = ('flats',)
+        fields = ('name', 'mobile_no', 'email')
+
+
+class FlatSerializer(serializers.ModelSerializer):
+    owner = serializers.CharField()
+
+    class Meta:
+        fields = ("building", "flat_no", "owner", "last_paid")
+        model = Flat
 
     def update(self, instance, validated_data):
-        instance.mobile_no = validated_data.get('mobile_no', instance.mobile_no)
-        validated_data.pop('mobile_no', None)
-        user_serializer = UserSerializer(instance.user, data=validated_data, partial=True)
-        user_serializer.is_valid(raise_exception=True)
-        user_serializer.save()
+        owner = validated_data.pop('owner', None)
+        for key, val in validated_data.items():
+            setattr(instance, key, val)
+        if owner is not None:
+            instance.owner = Resident.objects.get(pk=owner)
         instance.save()
         return instance
 
 
 class MonthlyCollectionSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField()
+    flat = serializers.CharField()
 
     class Meta:
         model = PaymentHistory
@@ -44,14 +38,11 @@ class MonthlyCollectionSerializer(serializers.ModelSerializer):
         read_only_fields = ('maintenance_charge', )
 
     def update(self, instance, validated_data):
-        data = {}
-        instance.amount = validated_data.get('amount', instance.amount)
-        instance.remarks = validated_data.get('remarks', instance.remarks)
-        instance.paid_for = validated_data.get('paid_for', instance.paid_for)
+        for key, val in validated_data.items():
+            setattr(instance, key, val)
         instance.save()
-
-        data['last_paid'] = validated_data.get('paid_for', instance.paid_for)
-        flat_serializer = FlatSerializer(instance.flat, data=data, partial=True)
+        data = validated_data.get('paid_for', instance.paid_for)
+        flat_serializer = FlatSerializer(instance.flat, data={"last_paid": data}, partial=True)
         flat_serializer.is_valid(raise_exception=True)
         flat_serializer.save()
         return instance
