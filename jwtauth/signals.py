@@ -11,5 +11,6 @@ def create_related_profile(sender, instance, created, *args, **kwargs):
     # this signal to be run was an update action, we know the user already
     # has a profile.
     if instance and created:
-        instance.profile = Resident.objects.create(user=instance)
+        print(instance)
+        # instance.profile = Resident.objects.create(user=instance)
 

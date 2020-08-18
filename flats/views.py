@@ -1,3 +1,4 @@
+import jwt
 from django.shortcuts import render
 
 # Create your views here.
@@ -10,6 +11,7 @@ from rest_framework.views import APIView
 from datetime import datetime
 
 from jwtauth.serializers import UserSerializer
+from django.conf import settings
 from .models import Flat, Resident, PaymentHistory
 from .serializers import FlatSerializer, ResidentSerializer, MonthlyCollectionSerializer
 from rest_framework.exceptions import PermissionDenied
@@ -25,6 +27,11 @@ from rest_framework.exceptions import PermissionDenied
 #
 #     def has_object_permission(self, request, view, obj):
 #         return obj.owner == request.user
+
+class IsAuthorised(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        payload = jwt.decode(request.token, settings.SECRET_KEY)
+        return obj.building == payload['building']
 
 
 class FlatListViewSet(viewsets.ModelViewSet):
