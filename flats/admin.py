@@ -9,7 +9,7 @@ class BuildingAdmin(admin.ModelAdmin):
 
 
 class FlatAdmin(admin.ModelAdmin):
-    list_display = ('building', 'owner', 'flat_no', 'maintenance_charge')
+    list_display = ('building', 'owner', 'flat_no', 'maintenance_charge', 'stock')
 
 
 class ResidentAdmin(admin.ModelAdmin):
@@ -17,7 +17,7 @@ class ResidentAdmin(admin.ModelAdmin):
 
 
 class PaymentHistoryAdmin(admin.ModelAdmin):
-    list_display = ('flat', 'owner', 'maintenance_charge', 'amount', 'paid_for', 'remarks', 'timestamp')
+    list_display = ('flat', 'owner', 'maintenance_charge', 'amount_paid', 'paid_for', 'remarks', 'timestamp')
 
 
 admin.site.register(Flat, FlatAdmin)

@@ -13,7 +13,7 @@ from datetime import datetime
 from jwtauth.serializers import UserSerializer
 from django.conf import settings
 from .models import Flat, Resident, PaymentHistory
-from .serializers import FlatSerializer, ResidentSerializer, MonthlyCollectionSerializer
+from .serializers import FlatSerializer, ResidentSerializer, DisplayCollectionSerializer, MakePaymentSerializer
 from rest_framework.exceptions import PermissionDenied
 
 
@@ -50,29 +50,18 @@ class MonthlyCollectionListCreateView(viewsets.ViewSet):
     permission_classes = (AllowAny,)
 
     def retrieve(self, request, pk):
-        instance = PaymentHistory.objects.get(pk=pk)
-        serializer = MonthlyCollectionSerializer(instance)
+        instance = Flat.objects.get(pk=pk)
+        serializer = DisplayCollectionSerializer(instance)
         return Response(serializer.data)
 
     def list(self, request, *args, **kwargs):
-        today = datetime.today()
-        flats_already_paid_this_month = \
-            PaymentHistory.objects.filter(
-                paid_for__month=today.month, paid_for__year=today.year).values_list('flat', flat=True)\
-            | PaymentHistory.objects.filter(paid_for=None).values_list('flat')
-        remaining_flats = Flat.objects.exclude(id__in=flats_already_paid_this_month)
-        for flat in remaining_flats:
-            blank_payment_record = PaymentHistory.objects.create(flat=flat)
-            print(blank_payment_record)
-
-        queryset = PaymentHistory.objects.filter(paid_for=None) | PaymentHistory.objects \
-            .filter(paid_for__month=today.month, paid_for__year=today.year)
-        serializer = MonthlyCollectionSerializer(queryset, many=True)
+        instance = Flat.objects.all()
+        serializer = DisplayCollectionSerializer(instance, many=True)
         return Response(serializer.data)
 
     def partial_update(self, request, pk):
-        instance = PaymentHistory.objects.get(pk=pk)
-        serializer = MonthlyCollectionSerializer(instance, data=request.data, partial=True)
+        instance = Flat.objects.get(pk=pk)
+        serializer = MakePaymentSerializer(instance, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
