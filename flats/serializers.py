@@ -1,59 +1,102 @@
+from django.core.serializers.json import DjangoJSONEncoder
 from rest_framework import serializers
+from rest_framework.utils import json
 
 from jwtauth.serializers import UserSerializer
 from .models import Flat, Resident, PaymentHistory
-
-
-class FlatSerializer(serializers.ModelSerializer):
-    owner = serializers.SerializerMethodField()
-
-    class Meta:
-        fields = ("flat_no", "owner", "last_paid")
-        model = Flat
-
-    def get_owner(self, obj):
-        return obj.owner.username
+from jwtauth.models import Building
 
 
 class ResidentSerializer(serializers.ModelSerializer):
-    username = serializers.CharField()
-    flats = serializers.StringRelatedField(many=True)
-    email = serializers.CharField()
-
     class Meta:
         model = Resident
-        fields = ('username', 'mobile_no', 'email', 'flats')
-        read_only_fields = ('flats',)
+        fields = ('name', 'mobile_no', 'email')
+
+
+class FlatSerializer(serializers.ModelSerializer):
+    owner = serializers.CharField()
+    building = serializers.CharField()
+
+    class Meta:
+        fields = ("building", "flat_no", "owner", "maintenance_charge", "last_paid")
+        model = Flat
 
     def update(self, instance, validated_data):
-        instance.mobile_no = validated_data.get('mobile_no', instance.mobile_no)
-        validated_data.pop('mobile_no', None)
-        user_serializer = UserSerializer(instance.user, data=validated_data, partial=True)
-        user_serializer.is_valid(raise_exception=True)
-        user_serializer.save()
+        print("#1", validated_data)
+
+        owner = validated_data.pop('owner', None)
+        building = validated_data.pop('building', None)
+        for key, val in validated_data.items():
+            setattr(instance, key, val)
+        if owner is not None:
+            instance.owner = Resident.objects.get(pk=owner)
+        if building is not None:
+            instance.building = Building.objects.get(pk=building)
         instance.save()
         return instance
 
 
-class MonthlyCollectionSerializer(serializers.ModelSerializer):
-    owner = serializers.ReadOnlyField()
+"""from flats.serializers import DisplayCollectionSerializer as dcs, DateSerializer as ds"""
+
+
+class DisplayCollectionSerializer(serializers.ModelSerializer):
+    dues = serializers.SerializerMethodField()
+    months = serializers.SerializerMethodField()
 
     class Meta:
-        model = PaymentHistory
-        fields = ('flat', 'owner', 'maintenance_charge', 'amount', 'paid_for', 'remarks')
-        read_only_fields = ('maintenance_charge', )
+        model = Flat
+        fields = ('flat_no', 'owner_name', 'maintenance_charge', 'stock', 'dues', 'months')
 
+    def get_dues(self, obj):
+        flat = self.instance
+        payment_histories_with_dues = PaymentHistory.objects.values('amount_paid') \
+            .filter(flat=obj, amount_paid__lt=obj.maintenance_charge)
+        dues = 0
+        for payment_history in payment_histories_with_dues:
+            dues += obj.maintenance_charge - payment_history['amount_paid']
+        return dues
+
+    def get_months(self, obj):
+        months = PaymentHistory.objects.values_list('paid_for') \
+            .filter(flat=obj, amount_paid__lt=obj.maintenance_charge)
+        return [month[0] for month in months]
+
+
+# from flats.serializers import MakePaymentSerializer as mps
+
+
+class MakePaymentSerializer(serializers.Serializer):
+    months = serializers.ListField(child=serializers.DateTimeField(format='%Y-%m-%dT%H:%M:%S.%fZ'), write_only=True)
+    amount_paid = serializers.CharField(write_only=True)
+    remarks = serializers.CharField(write_only=True)
+
+    # water tank analogy
     def update(self, instance, validated_data):
-        data = {}
-        instance.amount = validated_data.get('amount', instance.amount)
-        instance.remarks = validated_data.get('remarks', instance.remarks)
-        instance.paid_for = validated_data.get('paid_for', instance.paid_for)
+        if instance.stock is None:
+            instance.stock = 0
+        money = int(validated_data.get('amount_paid', 0)) + instance.stock
+        instance.stock = 0
+        dates = sorted(validated_data.get('months', []))
+        for date in dates:
+            try:
+                record = PaymentHistory.objects.get(flat=instance,
+                                                    paid_for__month=date.month,
+                                                    paid_for__year=date.year)
+            except PaymentHistory.DoesNotExist:
+                record = PaymentHistory.objects.create(flat=instance, paid_for=date)
+            record.remarks = validated_data.get('remarks', None)
+            if record.amount_paid is None:
+                record.amount_paid = 0
+            rest_amount = instance.maintenance_charge - record.amount_paid
+            if money >= rest_amount:
+                record.amount_paid = instance.maintenance_charge
+                money -= rest_amount
+            else:
+                record.amount_paid = money
+                money = 0
+            record.save()
+        instance.stock = money
         instance.save()
-
-        data['last_paid'] = validated_data.get('paid_for', instance.paid_for)
-        flat_serializer = FlatSerializer(instance.flat, data=data, partial=True)
-        flat_serializer.is_valid(raise_exception=True)
-        flat_serializer.save()
         return instance
 
 
