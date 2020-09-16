@@ -2,13 +2,13 @@
 Restarted Maintenance App(only backend at present).
 This is flat-admin-only use. No permissions set.
 <br />
-##Api end-points:
+## Api end-points:
 1. api/users/ - register flat admin
 1. api/flats/ - add and retrive flats
 2. api/residents/ - add and retrieve residents
 3. api/collections/ - Fetches list of flats, their maintenance charge and amount paid for that month (creates empty records for every new month)
 
-##Instructions:
+## Instructions:
 1. pip install -r requirement.txt
 2. python manage.py createsuperuser
 3. python manage.py makemigrations
