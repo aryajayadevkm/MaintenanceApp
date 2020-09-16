@@ -2,13 +2,13 @@
 Restarted Maintenance App(only backend at present).
 This is flat-admin-only use. No permissions set.
 <br />
-api end-points:
+##Api end-points:
 1. api/users/ - register flat admin
 1. api/flats/ - add and retrive flats
 2. api/residents/ - add and retrieve residents
 3. api/collections/ - Fetches list of flats, their maintenance charge and amount paid for that month (creates empty records for every new month)
 
-Instructions:
+##Instructions:
 1. pip install -r requirement.txt
 2. python manage.py createsuperuser
 3. python manage.py makemigrations
@@ -56,6 +56,7 @@ To add flats at api/flats/ end point on postman:
 <br />
 GET request at the same endpoint gives list of all flats, and PATCH request at api/flats/1/ lets you update details of flat whose id is 1.
 <br />
+
 The real feature of the app is collection of maintenance charge and record keeping. This means you can see 
 <br />
 1. due amount 
