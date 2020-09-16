@@ -17,6 +17,7 @@ Instructions:
 6. Go to django-admin interface and add a building
 
 Try the dummy data to register at api/users/ end point on postman:
+<br />
 {
     "user":{
         "username":"yourname",
