@@ -55,6 +55,14 @@ To add flats at api/flats/ end point on postman:
 }
 <br />
 GET request at the same endpoint gives list of all flats, and PATCH request at api/flats/1/ lets you update details of flat whose id is 1.
+<br />
+The real feature of the app is collection of maintenance charge and record keeping. This means you can see 
+<br />
+1. due amount 
+2. months which are overdue
+3. Pay in advance
+4. Stock up extra payment
+5. Use the stocked up amount to pay off the dues.
 
 
 
