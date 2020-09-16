@@ -42,6 +42,7 @@ To add residents with POST request at api/residents/ end point on postman:
    "mobile_no": "9876543210",
    "email": "resident@gmail.com"
 }
+<br />
 GET request at the same endpoint gives list of all residents, and PATCH request at api/residents/1/ lets you update details of resident whose id is 1.
 
 To add flats at api/flats/ end point on postman:
@@ -52,6 +53,7 @@ To add flats at api/flats/ end point on postman:
    "owner": "1",
    "maintenance_charge":"2500"
 }
+<br />
 GET request at the same endpoint gives list of all flats, and PATCH request at api/flats/1/ lets you update details of flat whose id is 1.
 
 
