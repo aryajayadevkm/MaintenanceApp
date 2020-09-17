@@ -26,6 +26,7 @@ This is flat-admin-only use. No permissions set.
     }
 }
 <br />
+<br />
 2. To login at api/users/login/ end point on postman:
 <br />
 {
@@ -34,6 +35,7 @@ This is flat-admin-only use. No permissions set.
         "password": "yourname1234"
     }
 }
+<br />
 <br />
 3. To add residents with POST request at api/residents/ end point on postman:
 <br />
@@ -45,7 +47,8 @@ This is flat-admin-only use. No permissions set.
 <br />
 GET request at the same endpoint gives list of all residents, and PATCH request at api/residents/1/ lets you update details of resident whose id is 1.
 <br />
-To add flats at api/flats/ end point on postman:
+<br />
+4. To add flats at api/flats/ end point on postman:
 <br />
 {
     "building":"1",
