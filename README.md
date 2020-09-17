@@ -15,7 +15,7 @@ This is flat-admin-only use. No permissions set.
 4. python manage.py migrate
 5. python manage.py createsuperuser
 6. Go to django-admin interface and add a building
-
+<br />
 1. Try the dummy data to register at api/users/ end point on postman:
 <br />
 {
@@ -25,7 +25,7 @@ This is flat-admin-only use. No permissions set.
         "password": "yourname1234"
     }
 }
-
+<br />
 2. To login at api/users/login/ end point on postman:
 <br />
 {
@@ -34,7 +34,7 @@ This is flat-admin-only use. No permissions set.
         "password": "yourname1234"
     }
 }
-
+<br />
 3. To add residents with POST request at api/residents/ end point on postman:
 <br />
 {
@@ -44,7 +44,7 @@ This is flat-admin-only use. No permissions set.
 }
 <br />
 GET request at the same endpoint gives list of all residents, and PATCH request at api/residents/1/ lets you update details of resident whose id is 1.
-
+<br />
 To add flats at api/flats/ end point on postman:
 <br />
 {
