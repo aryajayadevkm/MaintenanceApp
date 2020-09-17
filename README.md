@@ -57,7 +57,7 @@ To add flats at api/flats/ end point on postman:
 GET request at the same endpoint gives list of all flats, and PATCH request at api/flats/1/ lets you update details of flat whose id is 1.
 <br />
 
-## Testing maintenance collection
+### Testing maintenance collection
 The real feature of the app is collection of maintenance charge and record keeping. This means
 <br />
 1. It calculates due amount
