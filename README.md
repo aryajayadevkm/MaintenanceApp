@@ -16,7 +16,7 @@ This is flat-admin-only use. No permissions set.
 5. python manage.py createsuperuser
 6. Go to django-admin interface and add a building
 <br />
-1. Try the dummy data to register at ***api/users/*** end point on postman:
+1. Try the dummy data to register at api/users/ end point on postman:
 <br />
 {
     "user":{
@@ -27,6 +27,7 @@ This is flat-admin-only use. No permissions set.
 }
 <br />
 <br />
+
 2. To login at **api/users/login/** end point on postman:
 <br />
 {
@@ -69,7 +70,17 @@ The real feature of the app is collection of maintenance charge and record keepi
 4. Stock up extra payment
 5. Use the stocked up amount to pay off the dues.
 
-To try these, add some flats (maintenance charge should not be left blank)
+To try these, add some flats (maintenance charge should not be left blank). Now go to **api/collections/** end point and make a get request. You'll find the dues and the months overdue. (Note: Flat upon registration sets maintenance charge due for that month and payment records get appended automatically every month.
+<br />
+make a PATCH request at **api/collections/1/** with dummy data (here 1 is flat id):
+<br />
+{
+    "amount_paid": "1500",
+    "months": [
+        "2020-09-17"
+    ]
+}
+If there's any extra amount, it gets added to stock in Flat records, if amount paid is insufficient, dues increase accordingly. 
 
 
 
