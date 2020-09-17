@@ -1,20 +1,19 @@
+
 import jwt
 
 from datetime import datetime, timedelta, time
-
+from django.core.serializers.json import DjangoJSONEncoder
 from django.conf import settings
 from django.contrib.auth.models import (
     AbstractBaseUser, BaseUserManager, PermissionsMixin
 )
 from django.db import models
-# Create your models here.
-
+import json
 
 class Building(models.Model):
     name = models.CharField(null=True, max_length=200)
     address = models.CharField(null=True, max_length=250)
     no_of_flats = models.IntegerField(null=True)
-    timestamp = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
@@ -91,7 +90,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         token = jwt.encode({
             'id': self.pk,
             'exp': dt.timestamp(),
-            'building': self.building
+            'building': json.dumps(self.building, default=lambda o: o.__dict__, sort_keys=True, indent=4)
         }, settings.SECRET_KEY, algorithm='HS256')
 
         return token.decode('utf-8')
