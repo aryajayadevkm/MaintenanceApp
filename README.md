@@ -16,7 +16,7 @@ This is flat-admin-only use. No permissions set.
 5. python manage.py createsuperuser
 6. Go to django-admin interface and add a building
 
-Try the dummy data to register at api/users/ end point on postman:
+1. Try the dummy data to register at api/users/ end point on postman:
 <br />
 {
     "user":{
@@ -26,7 +26,7 @@ Try the dummy data to register at api/users/ end point on postman:
     }
 }
 
-To login at api/users/login/ end point on postman:
+2. To login at api/users/login/ end point on postman:
 <br />
 {
     "user":{
@@ -35,7 +35,7 @@ To login at api/users/login/ end point on postman:
     }
 }
 
-To add residents with POST request at api/residents/ end point on postman:
+3. To add residents with POST request at api/residents/ end point on postman:
 <br />
 {
    "name":"resident",
@@ -66,6 +66,7 @@ The real feature of the app is collection of maintenance charge and record keepi
 4. Stock up extra payment
 5. Use the stocked up amount to pay off the dues.
 
+To try these, add some flats (maintenance charge should not be left blank)
 
 
 
