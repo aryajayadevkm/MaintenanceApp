@@ -42,7 +42,7 @@ INSTALLED_APPS = [
 
     "rest_framework",  # new
     "corsheaders",  # new
-    "flats",  # new
+    "flats.apps.FlatConfig",  # new
     "jwtauth",  # new
 
 ]

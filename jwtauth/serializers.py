@@ -1,7 +1,13 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 
-from .models import User
+from .models import User, Building
+
+
+class BuildingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Building
+        fields = '__all__'
 
 
 class RegistrationSerializer(serializers.ModelSerializer):

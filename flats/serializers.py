@@ -13,30 +13,19 @@ class ResidentSerializer(serializers.ModelSerializer):
         fields = ('name', 'mobile_no', 'email')
 
 
+class CreateFlatSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = ("building", "flat_no", "owner", "maintenance_charge", "stock")
+        model = Flat
+
+
 class FlatSerializer(serializers.ModelSerializer):
     owner = serializers.CharField()
     building = serializers.CharField()
 
     class Meta:
-        fields = ("building", "flat_no", "owner", "maintenance_charge", "last_paid")
+        fields = ("building", "flat_no", "owner", "maintenance_charge", "stock")
         model = Flat
-
-    def update(self, instance, validated_data):
-        print("#1", validated_data)
-
-        owner = validated_data.pop('owner', None)
-        building = validated_data.pop('building', None)
-        for key, val in validated_data.items():
-            setattr(instance, key, val)
-        if owner is not None:
-            instance.owner = Resident.objects.get(pk=owner)
-        if building is not None:
-            instance.building = Building.objects.get(pk=building)
-        instance.save()
-        return instance
-
-
-"""from flats.serializers import DisplayCollectionSerializer as dcs, DateSerializer as ds"""
 
 
 class DisplayCollectionSerializer(serializers.ModelSerializer):
@@ -48,7 +37,6 @@ class DisplayCollectionSerializer(serializers.ModelSerializer):
         fields = ('flat_no', 'owner_name', 'maintenance_charge', 'stock', 'dues', 'months')
 
     def get_dues(self, obj):
-        flat = self.instance
         payment_histories_with_dues = PaymentHistory.objects.values('amount_paid') \
             .filter(flat=obj, amount_paid__lt=obj.maintenance_charge)
         dues = 0
@@ -62,11 +50,8 @@ class DisplayCollectionSerializer(serializers.ModelSerializer):
         return [month[0] for month in months]
 
 
-# from flats.serializers import MakePaymentSerializer as mps
-
-
 class MakePaymentSerializer(serializers.Serializer):
-    months = serializers.ListField(child=serializers.DateTimeField(format='%Y-%m-%dT%H:%M:%S.%fZ'), write_only=True)
+    months = serializers.ListField(child=serializers.DateField(format='%Y-%m-%d'), write_only=True)
     amount_paid = serializers.CharField(write_only=True)
     remarks = serializers.CharField(write_only=True)
 

@@ -1,7 +1,7 @@
 from django.db import models
 
 # Create your models here.
-from jwtauth.models import User, Building
+from jwtauth.models import Building
 
 
 class Resident(models.Model):
@@ -39,7 +39,7 @@ class Flat(models.Model):
 class PaymentHistory(models.Model):
     flat = models.ForeignKey(Flat, on_delete=models.CASCADE)
     amount_paid = models.IntegerField(null=True, blank=True, default=0)
-    paid_for = models.DateTimeField(null=True, blank=True)
+    paid_for = models.DateField(null=True, blank=True)
     remarks = models.TextField(null=True, blank=True, max_length=200)
     timestamp = models.DateTimeField(auto_now=True, blank=True, null=True)
 
