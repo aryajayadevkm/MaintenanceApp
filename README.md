@@ -49,7 +49,7 @@ This is flat-admin-only use. No permissions set.
 GET request at the same endpoint gives list of all residents, and PATCH request at api/residents/1/ lets you update details of resident whose id is 1.
 <br />
 <br />
-4. To add flats at **api/flats** end point on postman:
+4. To add flats at **api/flats/** end point on postman:
 <br />
 {
     "building":"1",
