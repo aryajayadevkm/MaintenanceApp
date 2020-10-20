@@ -58,6 +58,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:3000'
+]
+
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated"
@@ -66,18 +70,19 @@ REST_FRAMEWORK = {
         "rest_framework.parsers.JSONParser"
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
         "jwtauth.backends.JWTAuthentication",
         "rest_framework.authentication.SessionAuthentication",        # new
-        "rest_framework_simplejwt.authentication.JWTAuthentication" # new
     ]
 }
-
+#
 ROOT_URLCONF = 'project.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [ os.path.join(os.path.dirname(__file__), 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

@@ -1,12 +1,12 @@
 from django.urls import path
 from rest_framework.routers import DefaultRouter, SimpleRouter
-from .views import FlatViewSet, ResidentListViewSet, MonthlyCollectionListCreateView
+from .views import FlatViewSet, ResidentListViewSet, CollectionAPIView, BillsAPIView
 
 router = SimpleRouter()
-router.register('collections', MonthlyCollectionListCreateView, basename='collections')
 router.register('residents', ResidentListViewSet, basename='residents')
 router.register('flats', FlatViewSet, basename='flats')
 urlpatterns = [
-    # path('flats/', FlatListViewSet.as_view()),
+    path('collections/', CollectionAPIView.as_view()),
+    path('bills/', BillsAPIView.as_view()),
 ] + router.urls
 

@@ -9,4 +9,4 @@ def create_related_profile(sender, instance, created, *args, **kwargs):
     if instance and created:
         print("created blank payment record for", instance)
         today = datetime.today()
-        PaymentHistory.objects.create(flat=instance, paid_for=today.date())
+        PaymentHistory.objects.create(flat=instance, due_date=today.date())

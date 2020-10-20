@@ -1,8 +1,5 @@
-from django.core.serializers.json import DjangoJSONEncoder
 from rest_framework import serializers
-from rest_framework.utils import json
-
-from jwtauth.serializers import UserSerializer
+from django.db.models import F
 from .models import Flat, Resident, PaymentHistory
 from jwtauth.models import Building
 
@@ -15,7 +12,7 @@ class ResidentSerializer(serializers.ModelSerializer):
 
 class CreateFlatSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = ("building", "flat_no", "owner", "maintenance_charge", "stock")
+        fields = ("building", "flat_no", "owner", "maintenance_charge", "surplus")
         model = Flat
 
 
@@ -24,30 +21,38 @@ class FlatSerializer(serializers.ModelSerializer):
     building = serializers.CharField()
 
     class Meta:
-        fields = ("building", "flat_no", "owner", "maintenance_charge", "stock")
+        fields = ("building", "flat_no", "owner", "maintenance_charge", "surplus")
         model = Flat
+
+
+class BillSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    flat_no = serializers.SerializerMethodField()
+    amount = serializers.SerializerMethodField()
+    due = serializers.IntegerField()
+    amount_paid = serializers.IntegerField()
+    due_date = serializers.DateField()
+
+    def get_flat_no(self, obj):
+        return obj.flat.flat_no
+
+    def get_amount(self, obj):
+        amount = obj.flat.maintenance_charge
+        return amount
 
 
 class DisplayCollectionSerializer(serializers.ModelSerializer):
-    dues = serializers.SerializerMethodField()
-    months = serializers.SerializerMethodField()
+    due_details = serializers.SerializerMethodField()
 
     class Meta:
         model = Flat
-        fields = ('flat_no', 'owner_name', 'maintenance_charge', 'stock', 'dues', 'months')
+        fields = ('id', 'flat_no', 'owner_name', 'maintenance_charge', 'surplus', 'due_details')
 
-    def get_dues(self, obj):
-        payment_histories_with_dues = PaymentHistory.objects.values('amount_paid') \
-            .filter(flat=obj, amount_paid__lt=obj.maintenance_charge)
-        dues = 0
-        for payment_history in payment_histories_with_dues:
-            dues += obj.maintenance_charge - payment_history['amount_paid']
-        return dues
-
-    def get_months(self, obj):
-        months = PaymentHistory.objects.values_list('paid_for') \
-            .filter(flat=obj, amount_paid__lt=obj.maintenance_charge)
-        return [month[0] for month in months]
+    def get_due_details(self, obj):
+        months_dues = PaymentHistory.objects.values('due_date', 'amount_paid') \
+            .filter(flat=obj, amount_paid__lt=obj.maintenance_charge)\
+            .annotate(due=obj.maintenance_charge - F('amount_paid'))
+        return months_dues
 
 
 class MakePaymentSerializer(serializers.Serializer):
@@ -57,18 +62,19 @@ class MakePaymentSerializer(serializers.Serializer):
 
     # water tank analogy
     def update(self, instance, validated_data):
-        if instance.stock is None:
-            instance.stock = 0
-        money = int(validated_data.get('amount_paid', 0)) + instance.stock
-        instance.stock = 0
+        if instance.surplus is None:
+            instance.surplus = 0
+        money = int(validated_data.get('amount_paid', 0)) + instance.surplus
+        instance.surplus = 0
         dates = sorted(validated_data.get('months', []))
         for date in dates:
             try:
                 record = PaymentHistory.objects.get(flat=instance,
-                                                    paid_for__month=date.month,
-                                                    paid_for__year=date.year)
+                                                    due_date__month=date.month,
+                                                    due_date__year=date.year)
             except PaymentHistory.DoesNotExist:
-                record = PaymentHistory.objects.create(flat=instance, paid_for=date)
+                record = PaymentHistory.objects.create(flat=instance, due_date=date)
+
             record.remarks = validated_data.get('remarks', None)
             if record.amount_paid is None:
                 record.amount_paid = 0
@@ -80,7 +86,7 @@ class MakePaymentSerializer(serializers.Serializer):
                 record.amount_paid = money
                 money = 0
             record.save()
-        instance.stock = money
+        instance.surplus = money
         instance.save()
         return instance
 
