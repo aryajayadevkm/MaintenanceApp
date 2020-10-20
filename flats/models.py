@@ -13,6 +13,7 @@ class Resident(models.Model):
     building = models.ForeignKey(Building, on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
+        self.name = self.name
         return self.name
 
 
@@ -21,7 +22,7 @@ class Flat(models.Model):
     owner = models.ForeignKey(Resident, on_delete=models.CASCADE, blank=True, null=True)
     flat_no = models.CharField(max_length=200, null=True, blank=True)
     maintenance_charge = models.IntegerField(null=True, blank=True)
-    stock = models.IntegerField(null=True, blank=True, default=0)
+    surplus = models.IntegerField(null=True, blank=True, default=0)
     timestamp = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     def __str__(self):
@@ -39,7 +40,7 @@ class Flat(models.Model):
 class PaymentHistory(models.Model):
     flat = models.ForeignKey(Flat, on_delete=models.CASCADE)
     amount_paid = models.IntegerField(null=True, blank=True, default=0)
-    paid_for = models.DateField(null=True, blank=True)
+    due_date = models.DateField(null=True, blank=True)
     remarks = models.TextField(null=True, blank=True, max_length=200)
     timestamp = models.DateTimeField(auto_now=True, blank=True, null=True)
 
