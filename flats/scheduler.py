@@ -1,5 +1,5 @@
 from apscheduler.schedulers.background import BackgroundScheduler
-from .models import Flat, PaymentHistory
+from .models import Flat, PaymentHistory, Bill
 from datetime import datetime, timedelta
 from django.db import connection
 
@@ -16,11 +16,9 @@ def create_blank_records():
         flats = Flat.objects.all()
         for flat in flats:
             PaymentHistory.objects.get_or_create(flat=flat, due_date=today.date())
+            Bill.objects.get_or_create(flat=flat, tr_type="bill", amount=(-flat.maintenance_charge)
+                                       , applied=0, balance=(-flat.maintenance_charge))
 
-    elif PaymentHistory.objects.first() is None:
-        flats = Flat.objects.all()
-        for flat in flats:
-            PaymentHistory.objects.create(flat=flat, due_date=today.date())
 
 
 def test():

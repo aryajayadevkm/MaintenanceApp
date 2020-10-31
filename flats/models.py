@@ -52,3 +52,14 @@ class PaymentHistory(models.Model):
     def maintenance_charge(self):
         return self.flat.maintenance_charge
 
+
+class Bill(models.Model):
+    TR_CHOICES = (('bill', 'bill'), ('payment', 'payment'))
+    date = models.DateField(auto_now=True, blank=True, null=True)
+    flat = models.ForeignKey(Flat, on_delete=models.CASCADE, related_name='bills')
+    tr_type = models.CharField(max_length=20, choices=TR_CHOICES, blank=True, null=True)
+    amount = models.IntegerField(blank=True, null=True)
+    applied = models.IntegerField(blank=True, null=True)
+    balance = models.IntegerField(blank=True, null=True)
+
+
