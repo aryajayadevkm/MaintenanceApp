@@ -1,15 +1,14 @@
 import jwt
 
 # Create your views here.
-from django.db.models import F
 from rest_framework import viewsets, views
 from rest_framework import permissions
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from django.conf import settings
-from .models import Flat, Resident, PaymentHistory
-from .serializers import FlatSerializer, ResidentSerializer, DisplayCollectionSerializer, \
-    MakePaymentSerializer, CreateFlatSerializer, BillSerializer
+from .models import Flat, Resident, PaymentHistory, Bill
+from .serializers import FlatSerializer, ResidentSerializer, \
+    MakePaymentSerializer, CreateFlatSerializer, BillSerializer, ViewPaymentSerializer
 
 
 # class IsSuperUser(permissions.BasePermission):
@@ -67,31 +66,29 @@ class ResidentListViewSet(viewsets.ModelViewSet):
     queryset = Resident.objects.all()
 
 
-class BillsAPIView(views.APIView):
-    permission_classes = (AllowAny,)
+class BillAPIView(views.APIView):
+    permission_classes = (AllowAny, )
 
     def get(self, request):
-        queryset = PaymentHistory.objects.all() \
-            .annotate(due=F('flat__maintenance_charge') - F('amount_paid'))
+        queryset = Bill.objects.all()
         serializer = BillSerializer(queryset, many=True)
         return Response(serializer.data)
 
 
-class CollectionAPIView(views.APIView):
-    permission_classes = (AllowAny,)
+class PaymentAPIView(views.APIView):
+    permission_classes = (AllowAny, )
 
     def get(self, request):
         queryset = Flat.objects.all()
-        serializer = DisplayCollectionSerializer(queryset, many=True)
+        serializer = ViewPaymentSerializer(queryset, many=True)
         return Response(serializer.data)
 
     def post(self, request):
-        dues = request.data.get('Dues', [])
-        for due in dues:
-            pk = due.pop('id', None)
-            if pk is not None:
-                instance = Flat.objects.get(pk=pk)
-                serializer = MakePaymentSerializer(instance, data=due, partial=True)
-                if serializer.is_valid():
-                    serializer.save()
-        return Response({"message": "done!"})
+        pk = request.data.pop('id', None)
+        if pk is not None:
+            instance = Flat.objects.get(pk=pk)
+            serializer = MakePaymentSerializer(instance, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data)
+
