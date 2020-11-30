@@ -16,7 +16,7 @@ This is flat-admin-only use. No permissions set.
 5. python manage.py createsuperuser
 6. Go to django-admin interface and add a building
 <br />
-1. Try the dummy data to register at api/users/ end point on postman:
+1. Try the dummy data to register at **api/users/** end point on postman:
 <br />
 {
     "user":{
