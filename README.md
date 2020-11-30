@@ -62,13 +62,13 @@ GET request at the same endpoint gives list of all flats, and PATCH request at a
 <br />
 
 ### Testing maintenance collection
-The real feature of the app is collection of maintenance charge and record keeping. This means
+The real feature of the app is collection of maintenance charge and record keeping ie,
 <br />
-1. It calculates due amount
-2. months which are overdue
-3. Allows payment in advance
-4. Stock up extra payment
-5. Use the stocked up amount to pay off the dues.
+1. Generate bills automatically/manually
+2. Show overdues
+3. Record monthly/advance payment 
+4. Match bills and payments
+5. Manage fine
 
 To try these, add some flats (maintenance charge should not be left blank). Now go to **api/collections/** end point and make a get request. You'll find the dues and the months overdue. (Note: Flat upon registration sets maintenance charge due for that month and payment records get appended automatically every month.
 <br />
@@ -80,7 +80,7 @@ make a PATCH request at **api/collections/1/** with dummy data (here 1 is flat i
         "2020-09-17"
     ]
 }
-If there's any extra amount, it gets added to stock in Flat records, if amount paid is insufficient, dues increase accordingly. 
+If there's any extra amount it can be applied to bills any time. If amount paid is insufficient, bills are partially filled and dues get updated accordingly. 
 
 
 
