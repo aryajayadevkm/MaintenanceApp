@@ -1,33 +1,8 @@
 from rest_framework import serializers
-from django.db.models import F, Sum
-from .models import Flat, Resident, PaymentHistory, Bill
+from .models import Flat, Resident, Invoice
 from jwtauth.models import Building
+from .match_operations import match, match_bulk, unmatch_bulk
 
-
-def match(payments, bills):
-    i, j = 0, 0
-    np, nb = len(payments), len(bills)
-    while i < np and j < nb:
-        balance = payments[i].balance + bills[j].balance
-        (payments[i].balance, bills[j].balance) = (balance, 0) if balance >= 0 else (0, balance)
-        bills[j].applied = bills[j].balance - bills[j].amount
-        payments[i].applied = payments[i].balance - payments[i].amount
-        bills[j].save(), payments[i].save()
-        if balance >= 0:
-            j += 1
-        else:
-            i += 1
-    return [payments, bills]
-
-
-def match_bulk(flat):
-    payments = Bill.objects.filter(flat=flat, tr_type="payment", balance__gt=0)
-    bills = Bill.objects.filter(flat=flat, tr_type="bill", balance__lt=0)
-    match(payments, bills)
-
-
-def unmatch_bulk(flat):
-    Bill.objects.filter(flat=flat).update(balance=F('amount'), applied=0)
 
 """
 from flats.serializers import match
@@ -36,6 +11,9 @@ bills = Bill.objects.filter(flat=f, tr_type="bill")
 payments = Bill.objects.filter(flat=f, tr_type="payment")
 print(match(payments, bills))
 """
+
+ACTIONS = (('match', 'match'), ('unmatch', 'unmatch'))
+
 
 class ResidentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -49,6 +27,14 @@ class CreateFlatSerializer(serializers.ModelSerializer):
         model = Flat
 
 
+class InvoiceSerializer(serializers.ModelSerializer):
+    flat_no = serializers.CharField(source='flat.flat_no')
+
+    class Meta:
+        model = Invoice
+        fields = ('id', 'due_date', 'flat_no', 'tr_type', 'amount', 'applied', 'balance')
+
+
 class FlatSerializer(serializers.ModelSerializer):
     owner = serializers.CharField()
     building = serializers.CharField()
@@ -56,14 +42,6 @@ class FlatSerializer(serializers.ModelSerializer):
     class Meta:
         fields = ("building", "flat_no", "owner", "maintenance_charge", "surplus")
         model = Flat
-
-
-class BillSerializer(serializers.ModelSerializer):
-    flat_no = serializers.CharField(source='flat.flat_no')
-
-    class Meta:
-        model = Bill
-        fields = ('id', 'date', 'flat_no', 'tr_type', 'amount', 'applied', 'balance')
 
 
 class ViewPaymentSerializer(serializers.ModelSerializer):
@@ -74,22 +52,40 @@ class ViewPaymentSerializer(serializers.ModelSerializer):
         fields = ('id', 'flat_no', 'owner_name', 'maintenance_charge', 'dues')
 
     def get_dues(self, obj):
-        dues = Bill.objects.values('id', 'date', 'amount', 'balance').filter(flat=obj, tr_type="bill", balance__lt=0)
+        dues = Invoice.objects.values('id', 'due_date', 'amount', 'balance', 'applied')\
+            .filter(flat=obj, tr_type="bill", balance__lt=0)
         return dues
 
 
 class MakePaymentSerializer(serializers.Serializer):
-    amount = serializers.CharField()
-    bill_ids = serializers.ListField(child=serializers.IntegerField())
-    remarks = serializers.CharField()
+    amount = serializers.CharField(write_only=True)
+    bill_ids = serializers.ListField(child=serializers.IntegerField(), write_only=True)
+    remarks = serializers.CharField(allow_blank=True, required=False, write_only=True)
 
     def update(self, instance, validated_data):
-        amount = validated_data.get('amount', 0)
+        amount = int(validated_data.get('amount', 0))
         if amount > 0:
-            Bill.objects.create(flat=instance, tr_type="payment", amount=amount, applied=0, balance=amount)
-        total_payments = Bill.objects.filter(flat=instance, tr_type="payment", balance__gt=0)
+            Invoice.objects.create(flat=instance, tr_type="payment", amount=amount, applied=0, balance=amount)
+        total_payments = Invoice.objects.filter(flat=instance, tr_type="payment", balance__gt=0)
         bill_ids = validated_data.get('bill_ids', [])
-        bills = Bill.objects.filter(id__in=bill_ids)
+        bills = Invoice.objects.filter(id__in=bill_ids)
         matched = match(total_payments, bills)
         print(matched)
         return instance
+
+
+class MatchBillSerializer(serializers.Serializer):
+    flat_ids = serializers.ListField(child=serializers.IntegerField())
+    action = serializers.ChoiceField(choices=ACTIONS)
+
+    def create(self, validated_data):
+        ids = validated_data.get('flat_ids', [])
+        print(ids)
+        flats = Flat.objects.filter(pk__in=ids)
+        action = validated_data.get('action', None)
+        for flat in flats:
+            if action == "match":
+                match_bulk(flat)
+            elif action == "unmatch":
+                unmatch_bulk(flat)
+        return flats
