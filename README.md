@@ -6,8 +6,10 @@ This is flat-admin-only use. No permissions set.
 1. api/users/ - register flat admin
 1. api/flats/ - add and retrive flats
 2. api/residents/ - add and retrieve residents
-3. api/collections/ - Fetches list of flats, their maintenance charge and amount paid for that month (creates empty records for every new month)
-
+3. api/invoices/ - Fetches list of flats, their maintenance charge and amount paid for that month (creates empty records for every new month)
+4. api/payments/ - Get flat-wise dues Post payment
+5. api/match-bills/ - Match bills
+<br />
 ## Instructions:
 1. pip install -r requirement.txt
 2. python manage.py createsuperuser
