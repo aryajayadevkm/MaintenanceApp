@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Flat, Resident, PaymentHistory, Building, Bill
+from .models import Flat, Resident, Building, Invoice
 
 
 class BuildingAdmin(admin.ModelAdmin):
@@ -9,23 +9,17 @@ class BuildingAdmin(admin.ModelAdmin):
 
 
 class FlatAdmin(admin.ModelAdmin):
-    list_display = ('building', 'owner', 'flat_no', 'maintenance_charge', 'surplus')
+    list_display = ('building', 'owner', 'flat_no', 'maintenance_charge', 'created')
 
 
 class ResidentAdmin(admin.ModelAdmin):
     list_display = ('name', 'mobile_no', 'email')
 
 
-class PaymentHistoryAdmin(admin.ModelAdmin):
-    list_display = ('flat', 'owner', 'maintenance_charge', 'amount_paid', 'due_date', 'remarks', 'timestamp')
-
-
-class BillAdmin(admin.ModelAdmin):
-    list_display = ('date', 'flat', 'tr_type', 'amount', 'applied', 'balance')
+class InvoiceAdmin(admin.ModelAdmin):
+    list_display = ('due_date', 'flat', 'tr_type', 'amount', 'applied', 'balance', 'created')
 
 
 admin.site.register(Flat, FlatAdmin)
 admin.site.register(Resident, ResidentAdmin)
-admin.site.register(PaymentHistory, PaymentHistoryAdmin)
-
-admin.site.register(Bill, BillAdmin)
+admin.site.register(Invoice, InvoiceAdmin)
