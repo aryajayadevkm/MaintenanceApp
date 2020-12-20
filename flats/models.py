@@ -21,6 +21,9 @@ class Flat(models.Model):
     owner = models.ForeignKey(Resident, on_delete=models.CASCADE, blank=True, null=True)
     flat_no = models.CharField(max_length=200, null=True, blank=True)
     maintenance_charge = models.IntegerField(null=True, blank=True)
+    bhk = models.IntegerField(null=True, blank=True)
+    sq_feet = models.IntegerField(null=True, blank=True)
+    occupants = models.IntegerField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
     def __str__(self):

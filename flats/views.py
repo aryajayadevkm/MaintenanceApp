@@ -71,7 +71,7 @@ class InvoiceAPIView(views.APIView):
     permission_classes = (AllowAny, )
 
     def get(self, request):
-        order_by_list = ['flat', 'date']
+        order_by_list = ['flat', 'due_date']
         queryset = Invoice.objects.exclude(balance=0).order_by(*order_by_list)
         serializer = InvoiceSerializer(queryset, many=True)
         return Response(serializer.data)

@@ -18,12 +18,13 @@ ACTIONS = (('match', 'match'), ('unmatch', 'unmatch'))
 class ResidentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Resident
-        fields = ('name', 'mobile_no', 'email')
+        fields = ('id', 'name', 'mobile_no', 'email')
 
 
 class CreateFlatSerializer(serializers.ModelSerializer):
+
     class Meta:
-        fields = ("building", "flat_no", "owner", "maintenance_charge", "surplus")
+        fields = '__all__'
         model = Flat
 
 
@@ -40,7 +41,7 @@ class FlatSerializer(serializers.ModelSerializer):
     building = serializers.CharField()
 
     class Meta:
-        fields = ("building", "flat_no", "owner", "maintenance_charge", "surplus")
+        fields = ("building", "flat_no", "owner", "maintenance_charge", "bhk", "sq_feet", "occupants")
         model = Flat
 
 
