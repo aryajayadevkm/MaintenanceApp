@@ -1,7 +1,9 @@
 # MaintenanceApp
 Maintenance App backend.
 This is flat-admin-only use. No permissions set.
+
 <br />
+
 ## APIs:
 1. api/users/ - register flat admin
 1. api/flats/ - add and retrive flats
@@ -9,7 +11,9 @@ This is flat-admin-only use. No permissions set.
 3. api/invoices/ - Fetches list of flats, their maintenance charge and amount paid for that month (creates empty records for every new month)
 4. api/payments/ - Get flat-wise dues Post payment
 5. api/match-bills/ - Match bills
+
 <br />
+
 ## Instructions:
 1. pip install -r requirement.txt
 2. python manage.py createsuperuser
@@ -18,6 +22,7 @@ This is flat-admin-only use. No permissions set.
 5. python manage.py createsuperuser
 6. Go to django-admin interface and add a building
 <br />
+
 1. Try the dummy data to register at **api/users/** end point on postman:
 <br />
 {
