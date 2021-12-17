@@ -16,13 +16,13 @@ This is flat-admin-only use. No permissions set.
 5. python manage.py createsuperuser
 6. Go to django-admin interface and add a building
 7. Try the dummy data to register at **api/users/** end point on postman:
-{
-    "user":{
-        "username":"yourname",
-        "email":"yourname@gmail.com", 
-        "password": "yourname1234"
+    {
+        "user":{
+            "username":"yourname",
+            "email":"yourname@gmail.com", 
+            "password": "yourname1234"
+        }
     }
-}
 8. To login at **api/users/login/** end point on postman:
 {
     "user":{
