@@ -2,7 +2,7 @@
 Maintenance App backend.
 This is flat-admin-only use. No permissions set.
 <br />
-## Api end-points:
+## APIs:
 1. api/users/ - register flat admin
 1. api/flats/ - add and retrive flats
 2. api/residents/ - add and retrieve residents
