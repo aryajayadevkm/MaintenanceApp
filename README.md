@@ -3,7 +3,6 @@ Maintenance App backend.
 This is flat-admin-only use. No permissions set.
 
 <br />
-
 ## APIs:
 1. api/users/ - register flat admin
 1. api/flats/ - add and retrive flats
@@ -13,7 +12,6 @@ This is flat-admin-only use. No permissions set.
 5. api/match-bills/ - Match bills
 
 <br />
-
 ## Instructions:
 1. pip install -r requirement.txt
 2. python manage.py createsuperuser
@@ -25,6 +23,7 @@ This is flat-admin-only use. No permissions set.
 
 1. Try the dummy data to register at **api/users/** end point on postman:
 <br />
+```
 {
     "user":{
         "username":"yourname",
@@ -32,9 +31,8 @@ This is flat-admin-only use. No permissions set.
         "password": "yourname1234"
     }
 }
+```
 <br />
-<br />
-
 2. To login at **api/users/login/** end point on postman:
 <br />
 {
@@ -43,15 +41,17 @@ This is flat-admin-only use. No permissions set.
         "password": "yourname1234"
     }
 }
-<br />
+
 <br />
 3. To add residents with POST request at **api/residents/** end point on postman:
 <br />
+```
 {
    "name":"resident",
    "mobile_no": "9876543210",
    "email": "resident@gmail.com"
 }
+```
 <br />
 GET request at the same endpoint gives list of all residents, and PATCH request at api/residents/1/ lets you update details of resident whose id is 1.
 <br />
