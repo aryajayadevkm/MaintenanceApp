@@ -16,35 +16,39 @@ This is flat-admin-only use. No permissions set.
 5. python manage.py createsuperuser
 6. Go to django-admin interface and add a building
 7. Try the dummy data to register at **api/users/** end point on postman:
-    {
-        "user":{
-            "username":"yourname",
-            "email":"yourname@gmail.com", 
-            "password": "yourname1234"
-        }
-    }
+
+		{
+		    "user":{
+		        "username":"yourname",
+		        "email":"yourname@gmail.com", 
+		        "password": "yourname1234"
+		    }
+		}
 8. To login at **api/users/login/** end point on postman:
-{
-    "user":{
-        "email":"yourname@gmail.com", 
-        "password": "yourname1234"
-    }
-}
+
+		{
+		    "user":{
+		        "email":"yourname@gmail.com", 
+		        "password": "yourname1234"
+		    }
+		}
 9. To add residents with POST request at **api/residents/** end point on postman:
-{
-   "name":"resident",
-   "mobile_no": "9876543210",
-   "email": "resident@gmail.com"
-}
-GET request at the same endpoint gives list of all residents, and PATCH request at api/residents/1/ lets you update details of resident whose id is 1.
-10. To add flats at **api/flats/** end point on postman:
-{
-    "building":"1",
-   "flat_no": "G3",
-   "owner": "1",
-   "maintenance_charge":"2500"
-}
-GET request at the same endpoint gives list of all flats, and PATCH request at api/flats/1/ lets you update details of flat whose id is 1.
+ 
+		{
+		   "name":"resident",
+		   "mobile_no": "9876543210",
+		   "email": "resident@gmail.com"
+		}
+	GET request at the same endpoint gives list of all residents, and PATCH request at api/residents/1/ lets you update details of resident whose id is 1.
+11. To add flats at **api/flats/** end point on postman:
+
+		{
+		    "building":"1",
+		   "flat_no": "G3",
+		   "owner": "1",
+		   "maintenance_charge":"2500"
+		}
+	GET request at the same endpoint gives list of all flats, and PATCH request at api/flats/1/ lets you update details of flat whose id is 1.
 ### Try out some features
 This app lets you schedule bill generation and keeps record of all bills and payments,
 1. Generate bills automatically/manually
@@ -56,10 +60,11 @@ This app lets you schedule bill generation and keeps record of all bills and pay
 To try these, add some flats (maintenance charge should not be left blank). Now go to **api/collections/** end point and make a get request. You'll find the dues and the months overdue. (Note: Flat upon registration sets maintenance charge due for that month and payment records get appended automatically every month.
 
 Make a PATCH request at **api/collections/1/** with dummy data (here 1 is flat id):
-{
-    "amount_paid": "1500",
-    "months": [
-        "2020-09-17"
-    ]
-}
+
+	{
+	    "amount_paid": "1500",
+	    "months": [
+	        "2020-09-17"
+	    ]
+	}
 If there's any extra amount it can be applied to bills any time. If amount paid is insufficient, bills are partially filled and dues get updated accordingly. 
