@@ -43,7 +43,7 @@ This is flat-admin-only use. No permissions set.
 11. To add flats at **api/flats/** end point on postman:
 
 		{
-		    "building":"1",
+		   "building":"1",
 		   "flat_no": "G3",
 		   "owner": "1",
 		   "maintenance_charge":"2500"
