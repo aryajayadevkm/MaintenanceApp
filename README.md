@@ -1,5 +1,5 @@
 # MaintenanceApp
-Restarted Maintenance App(only backend at present).
+Maintenance App backend.
 This is flat-admin-only use. No permissions set.
 <br />
 ## Api end-points:
@@ -63,8 +63,8 @@ GET request at the same endpoint gives list of all residents, and PATCH request 
 GET request at the same endpoint gives list of all flats, and PATCH request at api/flats/1/ lets you update details of flat whose id is 1.
 <br />
 
-### Testing maintenance collection
-The real feature of the app is collection of maintenance charge and record keeping ie,
+### Check out some features
+This app lets you schedule bill generation and keeps record of all bills and payments,
 <br />
 1. Generate bills automatically/manually
 2. Show overdues
